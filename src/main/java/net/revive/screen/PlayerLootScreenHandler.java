@@ -1,36 +1,27 @@
-package net.revive.gui;
+package net.revive.screen;
 
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.minecraft.client.gui.screen.ingame.InventoryScreen;
+import com.mojang.datafixers.util.Pair;
+
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.SimpleInventory;
 import net.minecraft.item.ItemStack;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.screen.PlayerScreenHandler;
 import net.minecraft.screen.ScreenHandler;
 import net.minecraft.screen.ScreenHandlerType;
 import net.minecraft.screen.slot.Slot;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.revive.ReviveMain;
+import net.minecraft.util.Identifier;
 
-public class DeadPlayerScreenHandler extends ScreenHandler implements ExtendedScreenHandlerFactory {
+public class PlayerLootScreenHandler extends ScreenHandler {
 
-    private PlayerInventory lootablePlayerInventory;
+    private static final Identifier[] EMPTY_ARMOR_SLOT_TEXTURES = new Identifier[] { PlayerScreenHandler.EMPTY_BOOTS_SLOT_TEXTURE, PlayerScreenHandler.EMPTY_LEGGINGS_SLOT_TEXTURE,
+            PlayerScreenHandler.EMPTY_CHESTPLATE_SLOT_TEXTURE, PlayerScreenHandler.EMPTY_HELMET_SLOT_TEXTURE };
 
-    // public DungeonPortalScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
+    private final PlayerInventory lootablePlayerInventory;
 
-    public DeadPlayerScreenHandler(int syncId, PlayerInventory playerInventory, PacketByteBuf buf) {
-        this(syncId, playerInventory, new PlayerInventory(playerInventory.player.getWorld().getPlayerByUuid(buf.readUuid())));
-        this.lootablePlayerInventory = new PlayerInventory(playerInventory.player.getWorld().getPlayerByUuid(buf.readUuid()));
-    }
-
-    public static DeadPlayerScreenHandler createDeadPlayerHandler(int syncId, PlayerInventory playerInventory, PlayerInventory otherPlayerInventory) {
-        return new DeadPlayerScreenHandler(syncId, playerInventory, otherPlayerInventory);
-    }
-
-    public DeadPlayerScreenHandler(int syncId, PlayerInventory playerInventory, PlayerInventory otherPlayerInventory) {
-        super(ReviveMain.DEAD_PLAYER, syncId);
+    public PlayerLootScreenHandler(int syncId, PlayerInventory playerInventory, PlayerInventory otherPlayerInventory) {
+        super(ScreenHandlerType.GENERIC_9X5, syncId);
         this.lootablePlayerInventory = otherPlayerInventory;
         int m;
         for (m = 0; m < 3; ++m) {
@@ -41,6 +32,38 @@ public class DeadPlayerScreenHandler extends ScreenHandler implements ExtendedSc
         for (m = 0; m < 9; ++m) {
             this.addSlot(new Slot(this.lootablePlayerInventory, m, 8 + m * 18, 54));
         }
+        for (m = 0; m < 9; ++m) {
+            final int slotId = m;
+            this.addSlot(new Slot(this.lootablePlayerInventory, m + 36, 8 + m * 18, 72) {
+
+                @Override
+                public boolean canInsert(ItemStack stack) {
+                    if (slotId == 40) {
+                        return true;
+                    }
+                    return canInsertArmorStack(stack, slotId + 36);
+                }
+
+                @Override
+                public boolean isEnabled() {
+                    return slotId < 5;
+                }
+
+                @Override
+                public boolean canBeHighlighted() {
+                    return slotId < 5;
+                }
+
+                @Override
+                public Pair<Identifier, Identifier> getBackgroundSprite() {
+                    if (slotId < 4) {
+                        return Pair.of(PlayerScreenHandler.BLOCK_ATLAS_TEXTURE, EMPTY_ARMOR_SLOT_TEXTURES[slotId]);
+                    }
+                    return null;
+                }
+            });
+        }
+        // y: 90
         // Armor slots + offhand slot + other mods slot could get added with GENERIC_9x5
         // but if more than 4 items would be available 9X5 wouldn't be enough
         // and mod compatibilities have to get done by hand here at canInsert
@@ -80,29 +103,29 @@ public class DeadPlayerScreenHandler extends ScreenHandler implements ExtendedSc
 
         for (m = 0; m < 3; ++m) {
             for (int l = 0; l < 9; ++l) {
-                this.addSlot(new Slot(playerInventory, l + m * 9 + 9, 8 + l * 18, m * 18 + 90));
+                this.addSlot(new Slot(playerInventory, l + m * 9 + 9, 8 + l * 18, m * 18 + 108));
             }
         }
         for (m = 0; m < 9; ++m) {
-            this.addSlot(new Slot(playerInventory, m, 8 + m * 18, 148));
+            this.addSlot(new Slot(playerInventory, m, 8 + m * 18, 166));
         }
 
     }
 
-    // private boolean canInsertArmorStack(ItemStack stack, int slot) {
-    // switch (slot) {
-    // case 36:
-    // return MobEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.FEET;
-    // case 37:
-    // return MobEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.LEGS;
-    // case 38:
-    // return MobEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.CHEST;
-    // case 39:
-    // return MobEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.HEAD;
-    // default:
-    // return false;
-    // }
-    // }
+    private boolean canInsertArmorStack(ItemStack stack, int slot) {
+        switch (slot) {
+        case 36:
+            return LivingEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.FEET;
+        case 37:
+            return LivingEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.LEGS;
+        case 38:
+            return LivingEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.CHEST;
+        case 39:
+            return LivingEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.HEAD;
+        default:
+            return false;
+        }
+    }
 
     @Override
     public boolean canUse(PlayerEntity player) {
@@ -131,24 +154,6 @@ public class DeadPlayerScreenHandler extends ScreenHandler implements ExtendedSc
             }
         }
         return itemStack;
-    }
-
-    @Override
-    public Text getDisplayName() {
-        return this.getDisplayName();
-    }
-
-    // public DeadPlayerScreenHandler(int syncId, PlayerInventory playerInventory, PlayerInventory otherPlayerInventory) {
-    @Override
-    public ScreenHandler createMenu(int var1, PlayerInventory playerInventory, PlayerEntity var3) {
-        return new DeadPlayerScreenHandler(syncId, playerInventory, this.lootablePlayerInventory);
-        // return null;
-    }
-
-    @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        buf.writeUuid(this.lootablePlayerInventory.player.getUuid());
-        buf.writeUuid(this.lootablePlayerInventory.player.getUuid());
     }
 
 }

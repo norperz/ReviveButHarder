@@ -19,7 +19,7 @@ public class ReviveConfig implements ConfigData {
     @Comment("Chance for each inventory item to drop")
     public float dropChance = 0.3F;
     @Comment("Mainly for compatibility with RpgZ")
-    public boolean allowLootablePlayer = false;
+    public boolean allowLootablePlayer = true;
     @Comment("Revive without a potion")
     public boolean allowReviveWithHand = false;
     public int reviveHealthPoints = 2;

@@ -8,6 +8,7 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.At;
 
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.enchantment.EnchantmentHelper;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
@@ -16,7 +17,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import net.revive.ReviveMain;
-import net.revive.packet.ReviveServerPacket;
+import net.revive.network.packet.DeathReasonPacket;
 
 @Mixin(ServerPlayerEntity.class)
 public abstract class ServerPlayerEntityMixin extends PlayerEntity {
@@ -27,7 +28,7 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
 
     @Inject(method = "onDeath", at = @At(value = "HEAD"))
     private void onDeathMixin(DamageSource source, CallbackInfo info) {
-        ReviveServerPacket.writeS2CDeathReasonPacket((ServerPlayerEntity) (Object) this, source.equals(((ServerPlayerEntity) (Object) this).getDamageSources().outOfWorld()));
+        ServerPlayNetworking.send((ServerPlayerEntity) (Object) this, new DeathReasonPacket(source.equals(((ServerPlayerEntity) (Object) this).getDamageSources().outOfWorld())));
     }
 
     @Redirect(method = "onDeath", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;drop(Lnet/minecraft/entity/damage/DamageSource;)V"))
@@ -38,8 +39,9 @@ public abstract class ServerPlayerEntityMixin extends PlayerEntity {
             for (int i = 0; i < this.getInventory().size(); ++i) {
                 ItemStack itemStack = this.getInventory().getStack(i);
                 if (!itemStack.isEmpty() && this.random.nextFloat() < ReviveMain.CONFIG.dropChance) {
-                    if (!EnchantmentHelper.hasVanishingCurse(itemStack))
+                    if (!EnchantmentHelper.hasVanishingCurse(itemStack)) {
                         this.dropStack(itemStack);
+                    }
                     this.getInventory().removeStack(i);
                 }
             }

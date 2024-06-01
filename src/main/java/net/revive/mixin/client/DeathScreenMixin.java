@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import net.fabricmc.api.Environment;
+import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.api.EnvType;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.screen.DeathScreen;
@@ -22,7 +23,7 @@ import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.text.Text;
 import net.revive.ReviveMain;
 import net.revive.accessor.PlayerEntityAccessor;
-import net.revive.packet.ReviveClientPacket;
+import net.revive.network.packet.RevivePacket;
 
 @Environment(EnvType.CLIENT)
 @Mixin(DeathScreen.class)
@@ -44,17 +45,18 @@ public abstract class DeathScreenMixin extends Screen {
         if (!((PlayerEntityAccessor) this.client.player).getDeathReason())
             this.buttons.add((ButtonWidget) this.addDrawableChild(ButtonWidget.builder(Text.translatable("text.deathScreen.revive"), (button) -> {
                 if (((PlayerEntityAccessor) this.client.player).canRevive() && (ReviveMain.CONFIG.timer == -1 || (ReviveMain.CONFIG.timer != -1 && ReviveMain.CONFIG.timer > this.ticksSinceDeath)))
-                    ReviveClientPacket.writeC2SRevivePacket(((PlayerEntityAccessor) this.client.player).isSupportiveRevival());
+                    ClientPlayNetworking.send(new RevivePacket(((PlayerEntityAccessor) this.client.player).isSupportiveRevival()));
             }).dimensions(this.width / 2 - 100, this.height / 4 + 120, 200, 20).build()));
     }
 
     @Inject(method = "tick", at = @At(value = "TAIL"))
     private void tickMixin(CallbackInfo info) {
         if (this.buttons.get(this.buttons.size() - 1).active && (!((PlayerEntityAccessor) this.client.player).canRevive()
-                || (ReviveMain.CONFIG.timer != -1 && ReviveMain.CONFIG.timer < this.ticksSinceDeath && !((PlayerEntityAccessor) this.client.player).getDeathReason())))
+                || (ReviveMain.CONFIG.timer != -1 && ReviveMain.CONFIG.timer < this.ticksSinceDeath && !((PlayerEntityAccessor) this.client.player).getDeathReason()))) {
             this.buttons.get(this.buttons.size() - 1).active = false;
-        else if (((PlayerEntityAccessor) this.client.player).canRevive() && !this.buttons.get(this.buttons.size() - 1).active)
+        } else if (((PlayerEntityAccessor) this.client.player).canRevive() && !this.buttons.get(this.buttons.size() - 1).active) {
             this.buttons.get(this.buttons.size() - 1).active = true;
+        }
 
     }
 
@@ -72,6 +74,7 @@ public abstract class DeathScreenMixin extends Screen {
                         this.height / 4 + 146 + (!((PlayerEntityAccessor) this.client.player).getDeathReason() ? 0 : -24), 16777215);
             }
         }
+
     }
 
     @Override
