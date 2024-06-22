@@ -7,7 +7,7 @@ import net.minecraft.util.Identifier;
 
 public record RevivablePacket(boolean canRevive, boolean isSupportiveRevival) implements CustomPayload {
 
-    public static final CustomPayload.Id<RevivablePacket> PACKET_ID = new CustomPayload.Id<>(new Identifier("revive", "revivable_packet"));
+    public static final CustomPayload.Id<RevivablePacket> PACKET_ID = new CustomPayload.Id<>(Identifier.of("revive", "revivable_packet"));
 
     public static final PacketCodec<RegistryByteBuf, RevivablePacket> PACKET_CODEC = PacketCodec.of((value, buf) -> {
         buf.writeBoolean(value.canRevive);

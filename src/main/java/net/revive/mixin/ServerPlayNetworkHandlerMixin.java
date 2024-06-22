@@ -19,10 +19,10 @@ public class ServerPlayNetworkHandlerMixin {
     @Shadow
     public ServerPlayerEntity player;
 
-    @Inject(method = "onClientStatus", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/server/PlayerManager;respawnPlayer(Lnet/minecraft/server/network/ServerPlayerEntity;Z)Lnet/minecraft/server/network/ServerPlayerEntity;", ordinal = 1, shift = Shift.BEFORE))
+    @Inject(method = "onClientStatus", at = @At(value = "INVOKE_ASSIGN", target = "Lnet/minecraft/server/PlayerManager;respawnPlayer(Lnet/minecraft/server/network/ServerPlayerEntity;ZLnet/minecraft/entity/Entity$RemovalReason;)Lnet/minecraft/server/network/ServerPlayerEntity;", ordinal = 1, shift = Shift.BEFORE))
     private void onClientStatusMixin(ClientStatusC2SPacket packet, CallbackInfo info) {
         if (!ReviveMain.CONFIG.dropLoot) {
-            ((LivingEntityAccessor) player).callDrop(player.getDamageSources().generic());
+            ((LivingEntityAccessor) player).callDrop(this.player.getServerWorld(), this.player.getDamageSources().generic());
         }
     }
 }

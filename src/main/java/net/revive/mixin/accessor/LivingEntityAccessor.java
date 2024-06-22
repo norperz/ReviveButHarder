@@ -5,10 +5,11 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.server.world.ServerWorld;
 
 @Mixin(LivingEntity.class)
 public interface LivingEntityAccessor {
 
     @Invoker("drop")
-    void callDrop(DamageSource source);
+    void callDrop(ServerWorld world, DamageSource damageSource);
 }

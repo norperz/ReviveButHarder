@@ -7,7 +7,6 @@ import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
 import net.revive.ReviveMain;
 import net.revive.accessor.PlayerEntityAccessor;
 import net.revive.network.packet.DeathReasonPacket;
@@ -17,12 +16,6 @@ import net.revive.network.packet.RevivePacket;
 import net.revive.network.packet.ReviveSyncPacket;
 
 public class ReviveServerPacket {
-
-    public static final Identifier REVIVE_PACKET = new Identifier("revive", "revive_player");
-    public static final Identifier REVIVE_SYNC_PACKET = new Identifier("revive", "revive_health");
-    public static final Identifier DEATH_REASON_PACKET = new Identifier("revive", "death_reason");
-    public static final Identifier REVIVABLE_PACKET = new Identifier("revive", "revivable");
-    public static final Identifier FIRST_PERSON_PACKET = new Identifier("revive", "first_person");
 
     public static void init() {
         PayloadTypeRegistry.playS2C().register(DeathReasonPacket.PACKET_ID, DeathReasonPacket.PACKET_CODEC);

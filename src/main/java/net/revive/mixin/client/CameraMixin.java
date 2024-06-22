@@ -22,7 +22,7 @@ public class CameraMixin {
     @Shadow
     private float yaw;
 
-    @Inject(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;moveBy(DDD)V", ordinal = 0))
+    @Inject(method = "update", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/render/Camera;moveBy(FFF)V", ordinal = 0))
     private void updateMixin(BlockView area, Entity focusedEntity, boolean thirdPerson, boolean inverseView, float tickDelta, CallbackInfo info) {
         if (((LivingEntity) focusedEntity).deathTime > 20 && ReviveMain.CONFIG.thirdPersonOnDeath)
             this.setRotation(((LivingEntity) focusedEntity).deathTime * ReviveMain.CONFIG.rotationSpeed, 0.0F);

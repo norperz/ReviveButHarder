@@ -14,6 +14,7 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.screen.SimpleNamedScreenHandlerFactory;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -55,7 +56,7 @@ public abstract class PlayerEntityMixin extends LivingEntity implements PlayerEn
         if (!this.getWorld().isClient()) {
             if (ReviveMain.CONFIG.timer != -1 && ReviveMain.CONFIG.timer < this.deathTime) {
                 if (!ReviveMain.CONFIG.dropLoot) {
-                    this.drop(this.getDamageSources().generic());
+                    this.drop((ServerWorld) this.getWorld(), this.getDamageSources().generic());
                 }
                 this.getWorld().sendEntityStatus(this, (byte) 60);
                 this.remove(Entity.RemovalReason.KILLED);

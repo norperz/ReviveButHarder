@@ -7,7 +7,7 @@ import net.minecraft.util.Identifier;
 
 public record ReviveSyncPacket(int entityId, int healthPoints) implements CustomPayload {
 
-    public static final CustomPayload.Id<ReviveSyncPacket> PACKET_ID = new CustomPayload.Id<>(new Identifier("revive", "revive_sync_packet"));
+    public static final CustomPayload.Id<ReviveSyncPacket> PACKET_ID = new CustomPayload.Id<>(Identifier.of("revive", "revive_sync_packet"));
 
     public static final PacketCodec<RegistryByteBuf, ReviveSyncPacket> PACKET_CODEC = PacketCodec.of((value, buf) -> {
         buf.writeInt(value.entityId);

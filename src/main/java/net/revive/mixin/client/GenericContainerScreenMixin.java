@@ -22,7 +22,7 @@ import net.minecraft.util.Identifier;
 @Mixin(GenericContainerScreen.class)
 public abstract class GenericContainerScreenMixin extends HandledScreen<GenericContainerScreenHandler> {
 
-    private static final Identifier DISABLED_SLOT = new Identifier("revive", "textures/gui/disabled_slot.png");
+    private static final Identifier DISABLED_SLOT = Identifier.of("revive", "textures/gui/disabled_slot.png");
 
     @Shadow
     @Mutable

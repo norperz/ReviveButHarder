@@ -7,7 +7,6 @@
     "PlayerEntityMixin",
     "ServerPlayerEntityMixin",
     "ServerPlayNetworkHandlerMixin",
-    "PlayerManagerMixin",
     "PotionItemMixin",
     "accessor.LivingEntityAccessor"
   ],

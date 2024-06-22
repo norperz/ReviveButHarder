@@ -3,7 +3,6 @@ package net.revive.screen;
 import com.mojang.datafixers.util.Pair;
 
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.item.ItemStack;
@@ -115,13 +114,13 @@ public class PlayerLootScreenHandler extends ScreenHandler {
     private boolean canInsertArmorStack(ItemStack stack, int slot) {
         switch (slot) {
         case 36:
-            return LivingEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.FEET;
+            return this.lootablePlayerInventory.player.getPreferredEquipmentSlot(stack) == EquipmentSlot.FEET;
         case 37:
-            return LivingEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.LEGS;
+            return this.lootablePlayerInventory.player.getPreferredEquipmentSlot(stack) == EquipmentSlot.LEGS;
         case 38:
-            return LivingEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.CHEST;
+            return this.lootablePlayerInventory.player.getPreferredEquipmentSlot(stack) == EquipmentSlot.CHEST;
         case 39:
-            return LivingEntity.getPreferredEquipmentSlot(stack) == EquipmentSlot.HEAD;
+            return this.lootablePlayerInventory.player.getPreferredEquipmentSlot(stack) == EquipmentSlot.HEAD;
         default:
             return false;
         }
