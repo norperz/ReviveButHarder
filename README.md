@@ -1,5 +1,5 @@
 # ReviveButHarder
-ReviveButHarder is a change of [Globox1997's Revive Mod](https://github.com/Globox1997/Revive) to change obtainment of revival items to be more difficult.
+ReviveButHarder is an edit of [Globox1997's Revive Mod](https://github.com/Globox1997/Revive) to change obtainment of revival items to be more difficult.
 
 # Items
 Unlike the original mod, the only way to obtain a Revival Star is to craft it from a Nether Star.
