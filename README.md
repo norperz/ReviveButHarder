@@ -3,6 +3,7 @@ ReviveButHarder is an edit of [Globox1997's Revive Mod](https://github.com/Globo
 
 # Items
 Unlike the original mod, the only way to obtain a Revival Star is to craft it from a Nether Star.
+It also removes the Golden Apple potion recipe for a lesser revival potion.
 
 (put image here when done)
 
