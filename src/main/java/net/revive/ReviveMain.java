@@ -37,6 +37,8 @@ import net.revive.network.ReviveServerPacket;
 import net.revive.network.packet.DeathReasonPacket;
 import net.revive.network.packet.FirstPersonPacket;
 import net.revive.network.packet.RevivablePacket;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReviveMain implements ModInitializer {
 
@@ -59,6 +61,9 @@ public class ReviveMain implements ModInitializer {
     public static final RegistryEntry<Potion> REVIVIFY_POTION = register("revivify_potion", new Potion(new StatusEffectInstance(AFTERMATH_EFFECT, 600)));
     public static final RegistryEntry<Potion> SUPPORTIVE_REVIVIFY_POTION = register("supportive_revivify_potion", new Potion(new StatusEffectInstance(LIVELY_AFTERMATH_EFFECT, 600)));
 
+    public static final String MOD_ID = "Revive";
+    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+
     @Override
     public void onInitialize() {
         AutoConfig.register(ReviveConfig.class, JanksonConfigSerializer::new);
@@ -67,16 +72,10 @@ public class ReviveMain implements ModInitializer {
         Registry.register(Registries.ITEM, Identifier.of("revive", "revival_star"), REVIVE_ITEM);
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.add(REVIVE_ITEM));
         Registry.register(Registries.SOUND_EVENT, REVIVE_SOUND, REVIVE_SOUND_EVENT);
-        /*
-        FabricBrewingRecipeRegistryBuilder.BUILD.register((builder) -> {
-            builder.registerPotionRecipe(Potions.STRONG_REGENERATION, ReviveMain.REVIVE_ITEM, ReviveMain.SUPPORTIVE_REVIVIFY_POTION);
-            builder.registerPotionRecipe(Potions.MUNDANE, Items.GOLDEN_APPLE, ReviveMain.REVIVIFY_POTION);
-        });
 
-        TradeOfferHelper.registerVillagerOffers(VillagerProfession.CLERIC, 1, (factories -> {
-            factories.add((entity, random) -> new TradeOffer(new TradedItem(Items.EMERALD, 28), new ItemStack(REVIVE_ITEM), 4, 1, 0.4F));
-        }));
-        */
+        FabricBrewingRecipeRegistryBuilder.BUILD.register((builder) -> {
+            builder.registerPotionRecipe(Potions.STRONG_REGENERATION, ReviveMain.REVIVE_ITEM, ReviveMain.REVIVIFY_POTION);
+        });
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ServerPlayNetworking.send(handler.player, new DeathReasonPacket(((PlayerEntityAccessor) handler.player).getDeathReason()));
             ServerPlayNetworking.send(handler.player, new RevivablePacket(((PlayerEntityAccessor) handler.player).canRevive(), ((PlayerEntityAccessor) handler.player).isSupportiveRevival()));
@@ -86,6 +85,8 @@ public class ReviveMain implements ModInitializer {
                 ServerPlayNetworking.send(newPlayer, new FirstPersonPacket());
             }
         });
+
+        LOGGER.info("obligatory debug print (loaded successfully)");
     }
 
     private static RegistryEntry<StatusEffect> register(String id, StatusEffect statusEffect) {

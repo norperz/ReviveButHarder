@@ -18,8 +18,7 @@
         }
     },
     "result": {
-      "item": "revive:revival_star",
-      "count": 1
+      "id": "revive:revival_star"
     },
 
     "show_notification": true
