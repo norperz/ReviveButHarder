@@ -66,14 +66,17 @@ public class ReviveMain implements ModInitializer {
         ReviveServerPacket.init();
         Registry.register(Registries.ITEM, Identifier.of("revive", "revival_star"), REVIVE_ITEM);
         ItemGroupEvents.modifyEntriesEvent(ItemGroups.INGREDIENTS).register(entries -> entries.add(REVIVE_ITEM));
-        TradeOfferHelper.registerVillagerOffers(VillagerProfession.CLERIC, 1, (factories -> {
-            factories.add((entity, random) -> new TradeOffer(new TradedItem(Items.EMERALD, 28), new ItemStack(REVIVE_ITEM), 4, 1, 0.4F));
-        }));
         Registry.register(Registries.SOUND_EVENT, REVIVE_SOUND, REVIVE_SOUND_EVENT);
+        /*
         FabricBrewingRecipeRegistryBuilder.BUILD.register((builder) -> {
             builder.registerPotionRecipe(Potions.STRONG_REGENERATION, ReviveMain.REVIVE_ITEM, ReviveMain.SUPPORTIVE_REVIVIFY_POTION);
             builder.registerPotionRecipe(Potions.MUNDANE, Items.GOLDEN_APPLE, ReviveMain.REVIVIFY_POTION);
         });
+
+        TradeOfferHelper.registerVillagerOffers(VillagerProfession.CLERIC, 1, (factories -> {
+            factories.add((entity, random) -> new TradeOffer(new TradedItem(Items.EMERALD, 28), new ItemStack(REVIVE_ITEM), 4, 1, 0.4F));
+        }));
+        */
         ServerPlayConnectionEvents.JOIN.register((handler, sender, server) -> {
             ServerPlayNetworking.send(handler.player, new DeathReasonPacket(((PlayerEntityAccessor) handler.player).getDeathReason()));
             ServerPlayNetworking.send(handler.player, new RevivablePacket(((PlayerEntityAccessor) handler.player).canRevive(), ((PlayerEntityAccessor) handler.player).isSupportiveRevival()));
