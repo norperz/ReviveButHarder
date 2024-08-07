@@ -2,15 +2,16 @@
   "schemaVersion": 1,
   "id": "revive",
   "version": "${version}",
-  "name": "Revive",
+  "name": "ReviveButHarder",
   "description": "Revive your friends when they died",
   "authors": [
-    "Globox_Z"
+    "norperz/xpb",
+    "Original: Globox_Z"
   ],
   "contact": {
-    "homepage": "https://www.curseforge.com/minecraft/mc-mods/revive",
-    "sources": "https://github.com/Globox1997/Revive",
-    "issues": "https://github.com/Globox1997/Revive/issues"
+    "homepage": "https://github.com/Globox1997/Revive",
+    "sources": "https://github.com/norperz/ReviveButHarder",
+    "issues": "https://github.com/norperz/ReviveButHarder/issues"
   },
   "license": "MIT",
   "icon": "assets/revive/icon.png",
@@ -44,11 +45,5 @@
   },
   "suggests": {
     "another-mod": "*"
-  },
-  "custom": {
-    "mc-publish": {
-      "modrinth": "MGRhpQYp",
-      "curseforge": 533879
-    }
   }
 }
